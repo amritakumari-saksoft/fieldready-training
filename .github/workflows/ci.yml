@@ -18,8 +18,8 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@<ACTIONS_CHECKOUT_SHA>      # release tag of this commit
-      - uses: astral-sh/setup-uv@<ACTIONS_SETUP_UV_SHA>    # release tag of this commit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1      # release tag of this commit
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2    # release tag of this commit
       - run: uv sync --locked            # install exactly what uv.lock says
       - run: uv run ruff format --check  # formatting
       - run: uv run ruff check           # lint
@@ -32,7 +32,7 @@ jobs:
     # Gitleaks reads the whole Git history, not only the files of this pull request (DEP-06).
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@<ACTIONS_CHECKOUT_SHA>      # release tag of this commit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1      # release tag of this commit
         with:
           fetch-depth: 0                 # fetch every commit so the scan sees the full history
       - run: >-
@@ -46,5 +46,5 @@ jobs:
     needs: checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@<ACTIONS_CHECKOUT_SHA>      # release tag of this commit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1     # release tag of this commit
       - run: docker build --tag "fde-service:${{ github.sha }}" .
