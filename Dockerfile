@@ -12,12 +12,10 @@
 #   <UV_IMAGE_TAG>         the release tag of the uv tool image
 
 # ---------------------------------------------------------------- stage 1: build
-# A "multi-stage" build keeps build tools out of the final image (CTR-01).
-FROM python:<PYTHON_IMAGE_TAG>@sha256:<PYTHON_IMAGE_DIGEST> AS builder
-
+# A "multi-stage" build keeps build tools out of the final image (CTR-01)
+FROM python:3.15.1-slim@sha256:b23bb42e5298783f81e7e6f09e1175f68eb46000a789b3ee272ac231c212c4cf AS builder
 # Copy the uv program from its official image instead of installing it with pip.
-COPY --from=ghcr.io/astral-sh/uv:<UV_IMAGE_TAG> /uv /bin/uv
-
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /bin/uv
 WORKDIR /build
 
 # Copy only the dependency files first. Docker caches this step, so a code change does not
@@ -29,7 +27,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-dev --no-install-project
 
 # ---------------------------------------------------------------- stage 2: run
-FROM python:<PYTHON_IMAGE_TAG>@sha256:<PYTHON_IMAGE_DIGEST> AS runtime
+FROM python:3.15.1-slim@sha256:b23bb42e5298783f81e7e6f09e1175f68eb46000a789b3ee272ac231c212c4cf AS runtime
 
 # Run as a normal user with a fixed ID, never as root (CTR-02).
 RUN useradd --create-home --uid 1000 --shell /bin/sh appuser
