@@ -58,6 +58,7 @@ max-complexity = 10        # keep functions small (PY-14)
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-ra --strict-markers --strict-config"
 
 [tool.pyright]
