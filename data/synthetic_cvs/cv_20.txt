@@ -1,0 +1,6 @@
+Name: Aman Jain
+Email: aman.jain@example.com
+Phone: 9000000019
+Skills: Docker, Kubernetes
+Education: B.E Computer Engineering
+Professional Experience: 5 years
