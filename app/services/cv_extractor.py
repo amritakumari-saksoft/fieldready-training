@@ -2,19 +2,33 @@
 
 import json
 from pathlib import Path
+from typing import Protocol
 
 from pydantic import ValidationError
 
 from app.models.cv_models import CVData
-from app.services.llm_client import LLMClient
+from app.services.llm_client import LLMResult
 
 PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "cv_extract_v1.txt"
+
+
+class LLMClientProtocol(Protocol):
+    """Interface required by the CV extractor."""
+
+    def complete(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float = 0.0,
+    ) -> LLMResult:
+        """Generate a response from an LLM."""
+        ...
 
 
 class CVExtractor:
     """Convert CV text into validated structured data."""
 
-    def __init__(self, llm_client: LLMClient) -> None:
+    def __init__(self, llm_client: LLMClientProtocol) -> None:
         self.llm_client = llm_client
 
     def extract(self, cv_text: str) -> CVData:
@@ -44,7 +58,11 @@ class CVExtractor:
                 data = json.loads(result.content)
                 return CVData.model_validate(data)
 
-            except (json.JSONDecodeError, ValidationError, ValueError) as exc:
+            except (
+                json.JSONDecodeError,
+                ValidationError,
+                ValueError,
+            ) as exc:
                 if attempt == 1:
                     raise ValueError("CV extraction failed after repair retry") from exc
 
