@@ -1,0 +1,6 @@
+Name: Sneha Patel
+Email: sneha.patel@example.com
+Phone: 9000000006
+Skills: Java, Spring Boot
+Education: MCA
+Professional Experience: 6 years

@@ -1,0 +1,6 @@
+Name: Isha Bose
+Email: isha.bose@example.com
+Phone: 9000000014
+Skills: Docker, Kubernetes
+Education: MCA
+Professional Experience: 0 years

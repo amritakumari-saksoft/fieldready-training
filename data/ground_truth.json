@@ -1,0 +1,282 @@
+[
+  {
+    "cv_id": "cv_01",
+    "full_name": "Priya Sharma",
+    "email": "priya.sharma@example.com",
+    "phone": "9000000000",
+    "skills": [
+      "Python",
+      "SQL"
+    ],
+    "education": [
+      "B.Tech Computer Science"
+    ],
+    "experience_years": 0.0
+  },
+  {
+    "cv_id": "cv_02",
+    "full_name": "Rahul Verma",
+    "email": "rahul.verma@example.com",
+    "phone": "9000000001",
+    "skills": [
+      "Java",
+      "Spring Boot"
+    ],
+    "education": [
+      "B.Sc Information Technology"
+    ],
+    "experience_years": 1.0
+  },
+  {
+    "cv_id": "cv_03",
+    "full_name": "Ananya Rao",
+    "email": "ananya.rao@example.com",
+    "phone": "9000000002",
+    "skills": [
+      "JavaScript",
+      "React"
+    ],
+    "education": [
+      "MCA"
+    ],
+    "experience_years": 2.0
+  },
+  {
+    "cv_id": "cv_04",
+    "full_name": "Arjun Mehta",
+    "email": "arjun.mehta@example.com",
+    "phone": "9000000003",
+    "skills": [
+      "Python",
+      "FastAPI"
+    ],
+    "education": [
+      "B.E Computer Engineering"
+    ],
+    "experience_years": 3.0
+  },
+  {
+    "cv_id": "cv_05",
+    "full_name": "Neha Singh",
+    "email": "neha.singh@example.com",
+    "phone": "9000000004",
+    "skills": [
+      "Docker",
+      "Kubernetes"
+    ],
+    "education": [
+      "B.Tech Computer Science"
+    ],
+    "experience_years": 4.0
+  },
+  {
+    "cv_id": "cv_06",
+    "full_name": "Rohan Gupta",
+    "email": "rohan.gupta@example.com",
+    "phone": "9000000005",
+    "skills": [
+      "Python",
+      "SQL"
+    ],
+    "education": [
+      "B.Sc Information Technology"
+    ],
+    "experience_years": 5.0
+  },
+  {
+    "cv_id": "cv_07",
+    "full_name": "Sneha Patel",
+    "email": "sneha.patel@example.com",
+    "phone": "9000000006",
+    "skills": [
+      "Java",
+      "Spring Boot"
+    ],
+    "education": [
+      "MCA"
+    ],
+    "experience_years": 6.0
+  },
+  {
+    "cv_id": "cv_08",
+    "full_name": "Vikram Nair",
+    "email": "vikram.nair@example.com",
+    "phone": "9000000007",
+    "skills": [
+      "JavaScript",
+      "React"
+    ],
+    "education": [
+      "B.E Computer Engineering"
+    ],
+    "experience_years": 0.0
+  },
+  {
+    "cv_id": "cv_09",
+    "full_name": "Aisha Khan",
+    "email": "aisha.khan@example.com",
+    "phone": "9000000008",
+    "skills": [
+      "Python",
+      "FastAPI"
+    ],
+    "education": [
+      "B.Tech Computer Science"
+    ],
+    "experience_years": 1.0
+  },
+  {
+    "cv_id": "cv_10",
+    "full_name": "Karan Malhotra",
+    "email": "karan.malhotra@example.com",
+    "phone": "9000000009",
+    "skills": [
+      "Docker",
+      "Kubernetes"
+    ],
+    "education": [
+      "B.Sc Information Technology"
+    ],
+    "experience_years": 2.0
+  },
+  {
+    "cv_id": "cv_11",
+    "full_name": "Meera Iyer",
+    "email": "meera.iyer@example.com",
+    "phone": "9000000010",
+    "skills": [
+      "Python",
+      "SQL"
+    ],
+    "education": [
+      "MCA"
+    ],
+    "experience_years": 3.0
+  },
+  {
+    "cv_id": "cv_12",
+    "full_name": "Aditya Joshi",
+    "email": "aditya.joshi@example.com",
+    "phone": "9000000011",
+    "skills": [
+      "Java",
+      "Spring Boot"
+    ],
+    "education": [
+      "B.E Computer Engineering"
+    ],
+    "experience_years": 4.0
+  },
+  {
+    "cv_id": "cv_13",
+    "full_name": "Pooja Kapoor",
+    "email": "pooja.kapoor@example.com",
+    "phone": "9000000012",
+    "skills": [
+      "JavaScript",
+      "React"
+    ],
+    "education": [
+      "B.Tech Computer Science"
+    ],
+    "experience_years": 5.0
+  },
+  {
+    "cv_id": "cv_14",
+    "full_name": "Dev Shah",
+    "email": "dev.shah@example.com",
+    "phone": "9000000013",
+    "skills": [
+      "Python",
+      "FastAPI"
+    ],
+    "education": [
+      "B.Sc Information Technology"
+    ],
+    "experience_years": 6.0
+  },
+  {
+    "cv_id": "cv_15",
+    "full_name": "Isha Bose",
+    "email": "isha.bose@example.com",
+    "phone": "9000000014",
+    "skills": [
+      "Docker",
+      "Kubernetes"
+    ],
+    "education": [
+      "MCA"
+    ],
+    "experience_years": 0.0
+  },
+  {
+    "cv_id": "cv_16",
+    "full_name": "Kabir Sethi",
+    "email": "kabir.sethi@example.com",
+    "phone": "9000000015",
+    "skills": [
+      "Python",
+      "SQL"
+    ],
+    "education": [
+      "B.E Computer Engineering"
+    ],
+    "experience_years": 1.0
+  },
+  {
+    "cv_id": "cv_17",
+    "full_name": "Riya Das",
+    "email": "riya.das@example.com",
+    "phone": "9000000016",
+    "skills": [
+      "Java",
+      "Spring Boot"
+    ],
+    "education": [
+      "B.Tech Computer Science"
+    ],
+    "experience_years": 2.0
+  },
+  {
+    "cv_id": "cv_18",
+    "full_name": "Nikhil Kulkarni",
+    "email": "nikhil.kulkarni@example.com",
+    "phone": "9000000017",
+    "skills": [
+      "JavaScript",
+      "React"
+    ],
+    "education": [
+      "B.Sc Information Technology"
+    ],
+    "experience_years": 3.0
+  },
+  {
+    "cv_id": "cv_19",
+    "full_name": "Tara Menon",
+    "email": "tara.menon@example.com",
+    "phone": "9000000018",
+    "skills": [
+      "Python",
+      "FastAPI"
+    ],
+    "education": [
+      "MCA"
+    ],
+    "experience_years": 4.0
+  },
+  {
+    "cv_id": "cv_20",
+    "full_name": "Aman Jain",
+    "email": "aman.jain@example.com",
+    "phone": "9000000019",
+    "skills": [
+      "Docker",
+      "Kubernetes"
+    ],
+    "education": [
+      "B.E Computer Engineering"
+    ],
+    "experience_years": 5.0
+  }
+]
