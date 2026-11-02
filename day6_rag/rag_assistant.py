@@ -1,79 +1,66 @@
+import json
 import logging
 from pathlib import Path
 
-import chromadb
+import numpy as np
 import ollama
 from sentence_transformers import SentenceTransformer
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-)
-
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_DIR = BASE_DIR / "vector_db"
-
+STORE_DIR = BASE_DIR / "vector_store"
 MODEL_NAME = "qwen3.5:2b"
 
 
 def answer_question(question: str) -> None:
     logger.info("Loading embedding model...")
+    model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+    embeddings_path = STORE_DIR / "paragraph_embeddings.npy"
+    metadata_path = STORE_DIR / "paragraph_metadata.json"
 
-    client = chromadb.PersistentClient(path=str(DB_DIR))
+    embeddings = np.load(embeddings_path, allow_pickle=False)
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
 
-    collection = client.get_collection(name="policies_paragraph")
+    if len(embeddings) == 0 or len(embeddings) != len(metadata):
+        raise ValueError("Invalid or empty vector store")
 
-    if collection.count() == 0:
-        raise ValueError("The policy collection is empty")
-
-    # Step 1: Convert the question into an embedding
-    query_embedding = embedding_model.encode(
-        [question],
+    # Convert the customer question into an embedding.
+    query_embedding = model.encode(
+        question,
         normalize_embeddings=True,
-    ).tolist()
-
-    # Step 2: Retrieve the top 3 policy chunks
-    results = collection.query(
-        query_embeddings=query_embedding,
-        n_results=min(3, collection.count()),
-        include=["documents", "metadatas"],
+        convert_to_numpy=True,
     )
 
-    # Step 3: Validate retrieved results
-    retrieved_documents = results["documents"]
-    retrieved_metadatas = results["metadatas"]
+    # Calculate cosine similarity using normalized embeddings.
+    scores = embeddings @ np.asarray(
+        query_embedding,
+        dtype=np.float32,
+    )
 
-    if not retrieved_documents or not retrieved_metadatas:
-        raise ValueError("No documents or metadata returned from ChromaDB")
+    top_indices = np.argsort(-scores)[:3]
 
-    documents = retrieved_documents[0]
-    metadatas = retrieved_metadatas[0]
+    # Build context from the top 3 retrieved policy chunks.
+    context_parts: list[str] = []
+    sources: list[str] = []
 
-    if not documents or not metadatas:
-        raise ValueError("No matching policy chunks found")
+    for index in top_indices:
+        item = metadata[int(index)]
 
-    # Step 4: Build context using retrieved policies
-    context_parts = []
+        source = item["document"]
+        document = item["text"]
 
-    for document, metadata in zip(
-        documents,
-        metadatas,
-        strict=True,
-    ):
-        source = metadata.get("document")
-
-        if not isinstance(source, str):
-            raise ValueError("Invalid policy source metadata")
+        if not isinstance(source, str) or not isinstance(document, str):
+            raise ValueError("Invalid policy metadata")
 
         context_parts.append(f"Source: {source}\nContent: {document}")
+        sources.append(source)
 
     context = "\n\n".join(context_parts)
 
-    # Step 5: Generate the answer using local Ollama
+    # Generate a grounded answer using local Ollama.
     response = ollama.chat(
         model=MODEL_NAME,
         messages=[
@@ -96,19 +83,13 @@ def answer_question(question: str) -> None:
         options={"temperature": 0},
     )
 
-    # Step 6: Display the generated answer and sources
     logger.info("\nANSWER:")
     logger.info("%s", response.message.content)
 
     logger.info("\nRETRIEVED SOURCES:")
-
-    for metadata in metadatas:
-        source = metadata.get("document")
-
-        if isinstance(source, str):
-            logger.info("- %s", source)
+    for source in sources:
+        logger.info("- %s", source)
 
 
 if __name__ == "__main__":
-    question = "What should I do if my parcel arrives damaged?"
-    answer_question(question)
+    answer_question("What should I do if my parcel arrives damaged?")

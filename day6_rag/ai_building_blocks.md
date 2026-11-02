@@ -36,7 +36,7 @@
 
 **What it is:** Context management controls which information is provided to an LLM during a request. It helps keep prompts relevant and within the model's context-window limits.
 
-**When to use:** Supplying only the relevant parcel policies retrieved from ChromaDB.
+**When to use:** Supplying only the relevant parcel policies retrieved using the NumPy-based vector store.
 
 **Costs/Risks:** Token costs, missing relevant information, and excessive or irrelevant context.
 

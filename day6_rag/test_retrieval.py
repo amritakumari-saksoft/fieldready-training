@@ -1,19 +1,16 @@
 import csv
+import json
 import logging
 from pathlib import Path
 
-import chromadb
+import numpy as np
 from sentence_transformers import SentenceTransformer
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-)
-
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_DIR = BASE_DIR / "vector_db"
+STORE_DIR = BASE_DIR / "vector_store"
 
 QUESTIONS = [
     ("How long does standard delivery take?", "01_delivery_times.txt"),
@@ -33,51 +30,41 @@ STRATEGIES = ["fixed", "overlap", "paragraph"]
 
 def main() -> None:
     model = SentenceTransformer("all-MiniLM-L6-v2")
-    client = chromadb.PersistentClient(path=str(DB_DIR))
-
     results: list[dict[str, str | int]] = []
 
     for strategy in STRATEGIES:
-        collection = client.get_collection(name=f"policies_{strategy}")
+        embeddings_path = STORE_DIR / f"{strategy}_embeddings.npy"
+        metadata_path = STORE_DIR / f"{strategy}_metadata.json"
+
+        embeddings = np.load(embeddings_path, allow_pickle=False)
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+
+        if len(embeddings) == 0 or len(embeddings) != len(metadata):
+            raise ValueError(f"Invalid vector store for {strategy}")
 
         logger.info("\n--- Testing %s ---", strategy.upper())
 
         correct_top1 = 0
         correct_top3 = 0
 
-        if collection.count() == 0:
-            raise ValueError(f"Collection policies_{strategy} is empty")
-
         for question, expected_document in QUESTIONS:
             query_embedding = model.encode(
-                [question],
+                question,
                 normalize_embeddings=True,
-            ).tolist()
-
-            response = collection.query(
-                query_embeddings=query_embedding,
-                n_results=min(3, collection.count()),
-                include=["documents", "metadatas", "distances"],
+                convert_to_numpy=True,
             )
 
-            # Validate ChromaDB metadata
-            retrieved_metadatas = response["metadatas"]
+            # Both stored and query embeddings are normalized.
+            # Dot product therefore gives cosine similarity.
+            scores = embeddings @ np.asarray(query_embedding, dtype=np.float32)
 
-            if not retrieved_metadatas or not retrieved_metadatas[0]:
-                raise ValueError("No metadata returned from ChromaDB")
+            top_indices = np.argsort(-scores)[:3]
 
-            retrieved_documents: list[str] = []
+            retrieved_documents: list[str] = [
+                str(metadata[int(index)]["document"]) for index in top_indices
+            ]
 
-            for metadata in retrieved_metadatas[0]:
-                document_name = metadata.get("document")
-
-                if not isinstance(document_name, str):
-                    raise ValueError("Invalid document metadata")
-
-                retrieved_documents.append(document_name)
-
-            # Calculate retrieval accuracy
-            top1 = expected_document == retrieved_documents[0]
+            top1 = retrieved_documents[0] == expected_document
             top3 = expected_document in retrieved_documents
 
             correct_top1 += int(top1)
@@ -105,14 +92,12 @@ def main() -> None:
             correct_top1,
             len(QUESTIONS),
         )
-
         logger.info(
             "Top-3 accuracy: %d/%d",
             correct_top3,
             len(QUESTIONS),
         )
 
-    # Save results to CSV
     output_file = BASE_DIR / "retrieval_results.csv"
 
     fieldnames = [
@@ -124,11 +109,7 @@ def main() -> None:
         "top3_correct",
     ]
 
-    with output_file.open(
-        "w",
-        newline="",
-        encoding="utf-8",
-    ) as file:
+    with output_file.open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(results)
