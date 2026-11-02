@@ -31,10 +31,11 @@ QUESTIONS = [
 STRATEGIES = ["fixed", "overlap", "paragraph"]
 
 
-def main():
+def main() -> None:
     model = SentenceTransformer("all-MiniLM-L6-v2")
     client = chromadb.PersistentClient(path=str(DB_DIR))
-    results = []
+
+    results: list[dict[str, str | int]] = []
 
     for strategy in STRATEGIES:
         collection = client.get_collection(name=f"policies_{strategy}")
@@ -43,6 +44,9 @@ def main():
 
         correct_top1 = 0
         correct_top3 = 0
+
+        if collection.count() == 0:
+            raise ValueError(f"Collection policies_{strategy} is empty")
 
         for question, expected_document in QUESTIONS:
             query_embedding = model.encode(
@@ -56,8 +60,23 @@ def main():
                 include=["documents", "metadatas", "distances"],
             )
 
-            retrieved_documents = [item["document"] for item in response["metadatas"][0]]
+            # Validate ChromaDB metadata
+            retrieved_metadatas = response["metadatas"]
 
+            if not retrieved_metadatas or not retrieved_metadatas[0]:
+                raise ValueError("No metadata returned from ChromaDB")
+
+            retrieved_documents: list[str] = []
+
+            for metadata in retrieved_metadatas[0]:
+                document_name = metadata.get("document")
+
+                if not isinstance(document_name, str):
+                    raise ValueError("Invalid document metadata")
+
+                retrieved_documents.append(document_name)
+
+            # Calculate retrieval accuracy
             top1 = expected_document == retrieved_documents[0]
             top3 = expected_document in retrieved_documents
 
@@ -86,23 +105,31 @@ def main():
             correct_top1,
             len(QUESTIONS),
         )
+
         logger.info(
             "Top-3 accuracy: %d/%d",
             correct_top3,
             len(QUESTIONS),
         )
 
+    # Save results to CSV
     output_file = BASE_DIR / "retrieval_results.csv"
+
+    fieldnames = [
+        "strategy",
+        "question",
+        "expected_document",
+        "retrieved_documents",
+        "top1_correct",
+        "top3_correct",
+    ]
 
     with output_file.open(
         "w",
         newline="",
         encoding="utf-8",
     ) as file:
-        writer = csv.DictWriter(
-            file,
-            fieldnames=results[0].keys(),
-        )
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(results)
 

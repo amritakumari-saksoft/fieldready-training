@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 
 import chromadb
+from chromadb.api.types import Metadata
 from sentence_transformers import SentenceTransformer
 
 logging.basicConfig(
@@ -43,7 +44,7 @@ def main():
 
         texts = [chunk["text"] for chunk in chunks]
 
-        metadatas = [{"document": chunk["document"]} for chunk in chunks]
+        metadatas: list[Metadata] = [{"document": str(chunk["document"])} for chunk in chunks]
 
         logger.info(
             "Embedding %d %s chunks...",
