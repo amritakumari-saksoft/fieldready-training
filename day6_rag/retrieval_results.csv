@@ -1,0 +1,31 @@
+strategy,question,expected_document,retrieved_documents,top1_correct,top3_correct
+fixed,How long does standard delivery take?,01_delivery_times.txt,01_delivery_times.txt | 10_returns.txt | 02_delayed_parcels.txt,1,1
+fixed,What should I do if my parcel is late?,02_delayed_parcels.txt,02_delayed_parcels.txt | 05_lost_parcels.txt | 13_weather_delays.txt,1,1
+fixed,How can I track my parcel?,03_tracking.txt,03_tracking.txt | 05_lost_parcels.txt | 13_weather_delays.txt,1,1
+fixed,How do I report a damaged parcel?,04_damaged_parcels.txt,04_damaged_parcels.txt | 05_lost_parcels.txt | 06_refunds.txt,1,1
+fixed,When is a parcel considered lost?,05_lost_parcels.txt,05_lost_parcels.txt | 10_returns.txt | 19_failed_delivery.txt,1,1
+fixed,How long do refunds take?,06_refunds.txt,06_refunds.txt | 10_returns.txt | 01_delivery_times.txt,1,1
+fixed,How many delivery attempts are made?,07_delivery_attempts.txt,07_delivery_attempts.txt | 19_failed_delivery.txt | 02_delayed_parcels.txt,1,1
+fixed,Can I change my delivery address?,08_address_changes.txt,08_address_changes.txt | 15_prohibited_items.txt | 19_failed_delivery.txt,1,1
+fixed,Can I cancel my shipment?,09_cancellations.txt,09_cancellations.txt | 15_prohibited_items.txt | 19_failed_delivery.txt,1,1
+fixed,How do I return a parcel?,10_returns.txt,10_returns.txt | 06_refunds.txt | 05_lost_parcels.txt,1,1
+overlap,How long does standard delivery take?,01_delivery_times.txt,01_delivery_times.txt | 01_delivery_times.txt | 10_returns.txt,1,1
+overlap,What should I do if my parcel is late?,02_delayed_parcels.txt,02_delayed_parcels.txt | 05_lost_parcels.txt | 13_weather_delays.txt,1,1
+overlap,How can I track my parcel?,03_tracking.txt,03_tracking.txt | 05_lost_parcels.txt | 13_weather_delays.txt,1,1
+overlap,How do I report a damaged parcel?,04_damaged_parcels.txt,04_damaged_parcels.txt | 05_lost_parcels.txt | 04_damaged_parcels.txt,1,1
+overlap,When is a parcel considered lost?,05_lost_parcels.txt,05_lost_parcels.txt | 10_returns.txt | 19_failed_delivery.txt,1,1
+overlap,How long do refunds take?,06_refunds.txt,06_refunds.txt | 10_returns.txt | 01_delivery_times.txt,1,1
+overlap,How many delivery attempts are made?,07_delivery_attempts.txt,07_delivery_attempts.txt | 19_failed_delivery.txt | 02_delayed_parcels.txt,1,1
+overlap,Can I change my delivery address?,08_address_changes.txt,08_address_changes.txt | 15_prohibited_items.txt | 19_failed_delivery.txt,1,1
+overlap,Can I cancel my shipment?,09_cancellations.txt,09_cancellations.txt | 15_prohibited_items.txt | 19_failed_delivery.txt,1,1
+overlap,How do I return a parcel?,10_returns.txt,10_returns.txt | 06_refunds.txt | 05_lost_parcels.txt,1,1
+paragraph,How long does standard delivery take?,01_delivery_times.txt,01_delivery_times.txt | 02_delayed_parcels.txt | 10_returns.txt,1,1
+paragraph,What should I do if my parcel is late?,02_delayed_parcels.txt,02_delayed_parcels.txt | 05_lost_parcels.txt | 13_weather_delays.txt,1,1
+paragraph,How can I track my parcel?,03_tracking.txt,03_tracking.txt | 05_lost_parcels.txt | 13_weather_delays.txt,1,1
+paragraph,How do I report a damaged parcel?,04_damaged_parcels.txt,04_damaged_parcels.txt | 05_lost_parcels.txt | 06_refunds.txt,1,1
+paragraph,When is a parcel considered lost?,05_lost_parcels.txt,05_lost_parcels.txt | 10_returns.txt | 19_failed_delivery.txt,1,1
+paragraph,How long do refunds take?,06_refunds.txt,06_refunds.txt | 10_returns.txt | 01_delivery_times.txt,1,1
+paragraph,How many delivery attempts are made?,07_delivery_attempts.txt,07_delivery_attempts.txt | 19_failed_delivery.txt | 04_damaged_parcels.txt,1,1
+paragraph,Can I change my delivery address?,08_address_changes.txt,08_address_changes.txt | 15_prohibited_items.txt | 19_failed_delivery.txt,1,1
+paragraph,Can I cancel my shipment?,09_cancellations.txt,09_cancellations.txt | 15_prohibited_items.txt | 19_failed_delivery.txt,1,1
+paragraph,How do I return a parcel?,10_returns.txt,10_returns.txt | 06_refunds.txt | 05_lost_parcels.txt,1,1

@@ -31,10 +31,13 @@ class Settings(BaseSettings):
     postgres_password: SecretStr = SecretStr("")  # SecretStr hides the value if printed (CFG-09)
 
     # --- language model (provider-agnostic: switch provider by changing these three)
+
     llm_base_url: str = ""
     llm_model: str = ""
     llm_api_key: SecretStr = SecretStr("")
     llm_timeout_seconds: float = 30.0
+    llm_max_retries: int = 2
+    llm_fallback_models: str = ""
 
     @property
     def docs_enabled(self) -> bool:

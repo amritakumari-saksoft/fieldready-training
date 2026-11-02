@@ -1,0 +1,6 @@
+Name: Aisha Khan
+Email: aisha.khan@example.com
+Phone: 9000000008
+Skills: Python, FastAPI
+Education: B.Tech Computer Science
+Professional Experience: 1 years

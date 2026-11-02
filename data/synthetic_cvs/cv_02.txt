@@ -1,0 +1,6 @@
+Name: Rahul Verma
+Email: rahul.verma@example.com
+Phone: 9000000001
+Skills: Java, Spring Boot
+Education: B.Sc Information Technology
+Professional Experience: 1 years

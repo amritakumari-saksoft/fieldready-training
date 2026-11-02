@@ -1,0 +1,6 @@
+Name: Ananya Rao
+Email: ananya.rao@example.com
+Phone: 9000000002
+Skills: JavaScript, React
+Education: MCA
+Professional Experience: 2 years
