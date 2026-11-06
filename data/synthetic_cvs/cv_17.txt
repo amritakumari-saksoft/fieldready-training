@@ -1,0 +1,6 @@
+Name: Riya Das
+Email: riya.das@example.com
+Phone: 9000000016
+Skills: Java, Spring Boot
+Education: B.Tech Computer Science
+Professional Experience: 2 years

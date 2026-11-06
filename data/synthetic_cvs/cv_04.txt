@@ -1,0 +1,6 @@
+Name: Arjun Mehta
+Email: arjun.mehta@example.com
+Phone: 9000000003
+Skills: Python, FastAPI
+Education: B.E Computer Engineering
+Professional Experience: 3 years

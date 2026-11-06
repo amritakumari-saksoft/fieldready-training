@@ -1,0 +1,6 @@
+2026-10-28 10:00:00 INFO Application started
+2026-10-28 10:01:00 ERROR Database connection failed
+2026-10-28 10:02:00 WARNING Slow response
+2026-10-28 10:03:00 ERROR Database connection failed
+INVALID LOG LINE
+2026-10-28 10:04:00 INFO Application stopped
