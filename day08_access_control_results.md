@@ -54,3 +54,25 @@ Conclusion
 Successfully created a PostgreSQL database with pgvector and implemented basic tenant and role filtering using RLS.
 
 Testing identified an authorization weakness involving user-controlled session settings. Trusted identity enforcement remains necessary before the implementation can be considered secure.
+## Vector Similarity Access-Control Test
+
+Executed pgvector cosine distance search using:
+
+embedding <=> '[0.1, 0.2, 0.3]'
+
+The query was executed as fieldready_employee.
+
+Expected:
+Only authorized document chunks should be returned.
+
+Actual:
+Employee_guide.pdf returned.
+HR_policy.pdf not returned.
+Finance.pdf not returned.
+
+Status: PASS
+
+Conclusion:
+PostgreSQL Row-Level Security restricted
+the vector similarity search results to
+authorized document chunks.
