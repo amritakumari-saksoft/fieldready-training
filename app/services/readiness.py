@@ -1,41 +1,46 @@
-"""Readiness checks for service dependencies."""
+"""Application dependency readiness checks."""
 
 import logging
 
-import psycopg
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
-from app.config import get_settings
+from app.database import engine
 
 logger = logging.getLogger(__name__)
 
 
-def check_dependencies() -> list[str]:
-    """Return dependency problems. An empty list means ready."""
-    settings = get_settings()
+def check_database() -> bool:
+    """Check whether PostgreSQL is available."""
 
     try:
-        with (
-            psycopg.connect(
-                host=settings.postgres_host,
-                port=settings.postgres_port,
-                dbname=settings.postgres_db,
-                user=settings.postgres_user,
-                password=settings.postgres_password.get_secret_value(),
-                connect_timeout=3,
-            ) as connection,
-            connection.cursor() as cursor,
-        ):
-            cursor.execute("SELECT 1")
-            result = cursor.fetchone()
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
 
-            if result != (1,):
-                return ["Database health check failed"]
+        return True
 
-    except psycopg.Error as exc:
+    except SQLAlchemyError as exc:
         logger.warning(
             "Database readiness check failed: %s",
             type(exc).__name__,
         )
-        return ["Database unavailable"]
+        return False
 
-    return []
+
+def check_dependencies() -> list[str]:
+    """Return unavailable application dependencies."""
+
+    problems: list[str] = []
+
+    if not check_database():
+        problems.append("database_unavailable")
+
+    return problems
+
+
+def check_readiness() -> tuple[bool, list[str]]:
+    """Return readiness status and dependency problems."""
+
+    problems = check_dependencies()
+
+    return not problems, problems
