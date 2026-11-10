@@ -1,0 +1,6 @@
+Name: Kabir Sethi
+Email: kabir.sethi@example.com
+Phone: 9000000015
+Skills: Python, SQL
+Education: B.E Computer Engineering
+Professional Experience: 1 years

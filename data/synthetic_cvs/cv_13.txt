@@ -1,0 +1,6 @@
+Name: Pooja Kapoor
+Email: pooja.kapoor@example.com
+Phone: 9000000012
+Skills: JavaScript, React
+Education: B.Tech Computer Science
+Professional Experience: 5 years

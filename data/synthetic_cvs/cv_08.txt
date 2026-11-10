@@ -1,0 +1,6 @@
+Name: Vikram Nair
+Email: vikram.nair@example.com
+Phone: 9000000007
+Skills: JavaScript, React
+Education: B.E Computer Engineering
+Professional Experience: 0 years

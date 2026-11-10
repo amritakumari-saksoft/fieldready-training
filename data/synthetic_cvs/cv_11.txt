@@ -1,0 +1,6 @@
+Name: Meera Iyer
+Email: meera.iyer@example.com
+Phone: 9000000010
+Skills: Python, SQL
+Education: MCA
+Professional Experience: 3 years

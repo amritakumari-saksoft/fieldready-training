@@ -1,0 +1,1 @@
+A parcel is considered delayed when its expected delivery date has passed. Customers should contact support after 2 additional business days.

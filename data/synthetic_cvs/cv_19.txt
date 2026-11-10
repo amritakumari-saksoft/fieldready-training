@@ -1,0 +1,6 @@
+Name: Tara Menon
+Email: tara.menon@example.com
+Phone: 9000000018
+Skills: Python, FastAPI
+Education: MCA
+Professional Experience: 4 years

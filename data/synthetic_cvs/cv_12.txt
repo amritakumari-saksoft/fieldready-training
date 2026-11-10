@@ -1,0 +1,6 @@
+Name: Aditya Joshi
+Email: aditya.joshi@example.com
+Phone: 9000000011
+Skills: Java, Spring Boot
+Education: B.E Computer Engineering
+Professional Experience: 4 years
