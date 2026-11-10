@@ -42,6 +42,7 @@ dev = [
     "bandit",              # looks for risky Python patterns
     "pip-audit",           # checks dependencies for known vulnerabilities
     "pre-commit",          # runs checks before each commit
+    "httpx>=0.28.1",
 ]
 
 # ---------------------------------------------------------------- tool settings
@@ -60,7 +61,8 @@ max-complexity = 10        # keep functions small (PY-14)
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101"]      # assert is how pytest checks things
-
+"scripts/**" = ["T201"]
+"sql/injection_demo.py" = ["S608", "T201"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
