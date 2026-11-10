@@ -1,0 +1,220 @@
+{
+  "total_questions": 15,
+  "recall": {
+    "recall_at_1": 0.9333333333333333,
+    "recall_at_3": 1.0,
+    "recall_at_5": 1.0
+  },
+  "results": [
+    {
+      "question": "How long does standard parcel delivery take?",
+      "expected_chunk_id": "01_delivery_times_0",
+      "retrieved_chunk_ids": [
+        "01_delivery_times_0",
+        "02_delayed_parcels_0",
+        "10_returns_0",
+        "18_pickup_requests_0",
+        "13_weather_delays_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "What should I do if my parcel is delayed?",
+      "expected_chunk_id": "02_delayed_parcels_0",
+      "retrieved_chunk_ids": [
+        "02_delayed_parcels_0",
+        "13_weather_delays_0",
+        "05_lost_parcels_0",
+        "14_international_shipping_0",
+        "10_returns_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "How can I track my parcel?",
+      "expected_chunk_id": "03_tracking_0",
+      "retrieved_chunk_ids": [
+        "03_tracking_0",
+        "05_lost_parcels_0",
+        "13_weather_delays_0",
+        "04_damaged_parcels_0",
+        "18_pickup_requests_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "What should I do if my parcel arrives damaged?",
+      "expected_chunk_id": "04_damaged_parcels_0",
+      "retrieved_chunk_ids": [
+        "04_damaged_parcels_0",
+        "05_lost_parcels_0",
+        "02_delayed_parcels_0",
+        "19_failed_delivery_0",
+        "15_prohibited_items_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "When is a parcel considered lost?",
+      "expected_chunk_id": "05_lost_parcels_0",
+      "retrieved_chunk_ids": [
+        "05_lost_parcels_0",
+        "10_returns_0",
+        "19_failed_delivery_0",
+        "06_refunds_0",
+        "02_delayed_parcels_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "How long do refunds take?",
+      "expected_chunk_id": "06_refunds_0",
+      "retrieved_chunk_ids": [
+        "06_refunds_0",
+        "10_returns_0",
+        "01_delivery_times_0",
+        "02_delayed_parcels_0",
+        "05_lost_parcels_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "How many delivery attempts are made?",
+      "expected_chunk_id": "07_delivery_attempts_0",
+      "retrieved_chunk_ids": [
+        "07_delivery_attempts_0",
+        "19_failed_delivery_0",
+        "04_damaged_parcels_0",
+        "10_returns_0",
+        "18_pickup_requests_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "Can I change my delivery address?",
+      "expected_chunk_id": "08_address_changes_0",
+      "retrieved_chunk_ids": [
+        "08_address_changes_0",
+        "15_prohibited_items_0",
+        "19_failed_delivery_0",
+        "13_weather_delays_0",
+        "09_cancellations_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "Can I cancel my shipment?",
+      "expected_chunk_id": "09_cancellations_0",
+      "retrieved_chunk_ids": [
+        "09_cancellations_0",
+        "15_prohibited_items_0",
+        "19_failed_delivery_0",
+        "08_address_changes_0",
+        "16_insurance_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "How do I return a parcel?",
+      "expected_chunk_id": "10_returns_0",
+      "retrieved_chunk_ids": [
+        "10_returns_0",
+        "06_refunds_0",
+        "05_lost_parcels_0",
+        "07_delivery_attempts_0",
+        "19_failed_delivery_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "How do I obtain proof of delivery?",
+      "expected_chunk_id": "11_proof_of_delivery_0",
+      "retrieved_chunk_ids": [
+        "11_proof_of_delivery_0",
+        "04_damaged_parcels_0",
+        "19_failed_delivery_0",
+        "07_delivery_attempts_0",
+        "02_delayed_parcels_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "How do I make a customer complaint?",
+      "expected_chunk_id": "12_customer_complaints_0",
+      "retrieved_chunk_ids": [
+        "12_customer_complaints_0",
+        "04_damaged_parcels_0",
+        "20_escalations_0",
+        "09_cancellations_0",
+        "07_delivery_attempts_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "What happens when bad weather delays delivery?",
+      "expected_chunk_id": "13_weather_delays_0",
+      "retrieved_chunk_ids": [
+        "13_weather_delays_0",
+        "02_delayed_parcels_0",
+        "08_address_changes_0",
+        "14_international_shipping_0",
+        "09_cancellations_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "What are the international shipping rules?",
+      "expected_chunk_id": "14_international_shipping_0",
+      "retrieved_chunk_ids": [
+        "17_weight_limits_0",
+        "14_international_shipping_0",
+        "15_prohibited_items_0",
+        "01_delivery_times_0",
+        "08_address_changes_0"
+      ],
+      "recall_at_1": 0,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    },
+    {
+      "question": "Which items are prohibited from shipping?",
+      "expected_chunk_id": "15_prohibited_items_0",
+      "retrieved_chunk_ids": [
+        "15_prohibited_items_0",
+        "17_weight_limits_0",
+        "04_damaged_parcels_0",
+        "19_failed_delivery_0",
+        "16_insurance_0"
+      ],
+      "recall_at_1": 1,
+      "recall_at_3": 1,
+      "recall_at_5": 1
+    }
+  ]
+}
