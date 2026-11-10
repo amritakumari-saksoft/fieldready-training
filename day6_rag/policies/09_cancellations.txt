@@ -1,0 +1,1 @@
+Customers may cancel a shipment before dispatch. Once dispatched, cancellation requests require support review.

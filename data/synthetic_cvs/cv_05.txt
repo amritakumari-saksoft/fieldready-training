@@ -1,0 +1,6 @@
+Name: Neha Singh
+Email: neha.singh@example.com
+Phone: 9000000004
+Skills: Docker, Kubernetes
+Education: B.Tech Computer Science
+Professional Experience: 4 years

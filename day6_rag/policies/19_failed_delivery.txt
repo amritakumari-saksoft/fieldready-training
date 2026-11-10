@@ -1,0 +1,1 @@
+If delivery fails because the recipient is unavailable, the courier may leave instructions for redelivery.
