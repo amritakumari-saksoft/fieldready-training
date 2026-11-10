@@ -1,4 +1,6 @@
-def show_source_passage(citations: list[dict]) -> list[dict]:
+def show_source_passage(
+    citations: list[dict] | None,
+) -> list[dict]:
     """
     Return original source passages from RAG citations.
 
@@ -9,6 +11,9 @@ def show_source_passage(citations: list[dict]) -> list[dict]:
     Returns:
         List of source passages containing document,
         chunk_id and passage.
+
+    Raises:
+        ValueError: If citations or citation fields are invalid.
     """
 
     if not isinstance(citations, list):

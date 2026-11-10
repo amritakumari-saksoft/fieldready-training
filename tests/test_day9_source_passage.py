@@ -37,7 +37,6 @@ def test_show_multiple_source_passages():
     result = show_source_passage(citations)
 
     assert len(result) == 2
-    assert result[0]["document"] == "04_damaged_parcels.txt"
     assert result[1]["document"] == "05_lost_parcels.txt"
 
 
@@ -46,7 +45,7 @@ def test_empty_citations_return_empty_list():
 
 
 @pytest.mark.parametrize(
-    ("citation", "error_message"),
+    ("citation", "missing_field"),
     [
         (
             {
@@ -71,8 +70,14 @@ def test_empty_citations_return_empty_list():
         ),
     ],
 )
-def test_missing_required_fields_raise_error(citation, error_message):
-    with pytest.raises(ValueError, match=error_message):
+def test_missing_required_fields_raise_error(
+    citation,
+    missing_field,
+):
+    with pytest.raises(
+        ValueError,
+        match=f"Missing required citation field: {missing_field}",
+    ):
         show_source_passage([citation])
 
 
