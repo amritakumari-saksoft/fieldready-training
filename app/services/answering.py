@@ -1,189 +1,248 @@
-"""Production RAG answering service.
-
-Retrieves policy chunks, builds grounded context, calls the configured
-OpenAI-compatible LLM, and returns source citations.
-"""
+"""RAG answering service with graceful missing-store handling."""
 
 import json
 import logging
-from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 import httpx
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
-from app.config import get_settings
-from app.models.schemas import AskResponse, Citation
+from app.config import Settings
 from app.services.llm_client import LLMClient
-from day9_rag.context import assemble_context
 
 logger = logging.getLogger(__name__)
 
-BASE_DIR = Path(__file__).resolve().parents[2]
-STORE_DIR = BASE_DIR / "day6_rag" / "vector_store"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+STORE_DIR = PROJECT_ROOT / "day6_rag" / "vector_store"
 
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-DEFAULT_TOP_K = 3
-DEFAULT_TOKEN_BUDGET = 2000
-MIN_SIMILARITY = 0.30
+SIMILARITY_THRESHOLD = 0.30
+MAX_CONTEXT_TOKENS = 3000
+MAX_RESULTS = 5
 
-
-@lru_cache(maxsize=1)
-def load_vector_store():
-    """Load and validate the local vector store."""
-
-    embeddings = np.load(
-        STORE_DIR / "paragraph_embeddings.npy",
-        allow_pickle=False,
-    )
-
-    metadata = json.loads((STORE_DIR / "paragraph_metadata.json").read_text(encoding="utf-8"))
-
-    if embeddings.ndim != 2 or len(embeddings) == 0:
-        raise ValueError("Invalid or empty vector store")
-
-    if len(embeddings) != len(metadata):
-        raise ValueError("Embedding and metadata counts do not match")
-
-    if not np.isfinite(embeddings).all():
-        raise ValueError("Vector store contains invalid embeddings")
-
-    if any(not all(key in item for key in ("document", "chunk_id", "text")) for item in metadata):
-        raise ValueError("Vector store metadata is incomplete")
-
-    return embeddings, metadata
+UNKNOWN_ANSWER = "I don't know based on the available sources."
 
 
-@lru_cache(maxsize=1)
-def load_embedding_model():
-    """Load the embedding model once."""
+def load_vector_store() -> tuple[
+    np.ndarray | None,
+    list[dict[str, Any]],
+]:
+    """Load embeddings and metadata safely."""
 
-    return SentenceTransformer(EMBEDDING_MODEL)
+    embeddings_path = STORE_DIR / "paragraph_embeddings.npy"
+    metadata_path = STORE_DIR / "paragraph_metadata.json"
+
+    try:
+        if not embeddings_path.is_file():
+            logger.warning("RAG embeddings file is missing")
+            return None, []
+
+        if not metadata_path.is_file():
+            logger.warning("RAG metadata file is missing")
+            return None, []
+
+        embeddings = np.load(
+            embeddings_path,
+            allow_pickle=False,
+        )
+
+        with metadata_path.open(encoding="utf-8") as file:
+            metadata = json.load(file)
+
+        if not isinstance(metadata, list):
+            return None, []
+
+        if not all(isinstance(item, dict) for item in metadata):
+            return None, []
+
+        if embeddings.ndim != 2:
+            return None, []
+
+        if len(embeddings) != len(metadata):
+            return None, []
+
+        return embeddings, metadata
+
+    except OSError, ValueError, json.JSONDecodeError:
+        logger.exception("Unable to load RAG vector store")
+        return None, []
 
 
-@lru_cache(maxsize=1)
-def get_llm_client():
-    """Create a reusable provider-agnostic LLM client."""
-
-    settings = get_settings()
-    http_client = httpx.Client()
-
-    return LLMClient(settings, http_client)
-
-
-def retrieve(question: str, top_k: int = DEFAULT_TOP_K) -> list[dict]:
-    """Retrieve the most relevant policy chunks."""
+def retrieve(question: str) -> list[dict[str, Any]]:
+    """Retrieve relevant passages using cosine similarity."""
 
     embeddings, metadata = load_vector_store()
-    model = load_embedding_model()
 
-    query_embedding = model.encode(
-        question,
-        normalize_embeddings=True,
-        convert_to_numpy=True,
-    )
+    if embeddings is None or not metadata:
+        logger.warning("Vector store unavailable")
+        return []
 
-    query_embedding = np.asarray(query_embedding, dtype=np.float32)
+    try:
+        from sentence_transformers import SentenceTransformer
 
-    if query_embedding.shape != (embeddings.shape[1],):
-        raise ValueError("Query and document embedding dimensions differ")
+        model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    # The current vector store is a single-accessible policy corpus.
-    # Add authorization filtering here BEFORE similarity ranking when
-    # document/user permission metadata is introduced.
+        question_embedding = model.encode(
+            [question],
+            normalize_embeddings=True,
+        )
 
-    scores = embeddings @ query_embedding
+        vectors = embeddings.astype(
+            np.float32,
+            copy=False,
+        )
 
-    indices = np.argsort(-scores)[:top_k]
+        norms = np.linalg.norm(
+            vectors,
+            axis=1,
+            keepdims=True,
+        )
 
-    results = []
+        normalized = np.divide(
+            vectors,
+            norms,
+            out=np.zeros_like(vectors),
+            where=norms != 0,
+        )
 
-    for index in indices:
-        item = dict(metadata[int(index)])
-        item["score"] = float(scores[int(index)])
-        results.append(item)
+        scores = normalized @ question_embedding[0]
 
-    return results
+        results: list[dict[str, Any]] = []
+
+        for index in np.argsort(scores)[::-1][:MAX_RESULTS]:
+            score = float(scores[index])
+
+            if score < SIMILARITY_THRESHOLD:
+                continue
+
+            results.append(
+                {
+                    **metadata[index],
+                    "similarity": score,
+                }
+            )
+
+        return results
+
+    except Exception:
+        logger.exception("RAG retrieval failed")
+        return []
 
 
-def answer_question(question: str) -> AskResponse:
-    """Generate an answer grounded only in retrieved policy passages."""
+def build_context(
+    retrieved: list[dict[str, Any]],
+) -> str:
+    """Build context while respecting the token budget."""
 
-    if not question or not question.strip():
-        raise ValueError("Question cannot be empty")
+    context_parts: list[str] = []
+    token_count = 0
+
+    for item in retrieved:
+        passage = str(item.get("text", "")).strip()
+
+        if not passage:
+            continue
+
+        estimated_tokens = len(passage.split())
+
+        if token_count + estimated_tokens > MAX_CONTEXT_TOKENS:
+            continue
+
+        context_parts.append(passage)
+        token_count += estimated_tokens
+
+    return "\n\n".join(context_parts)
+
+
+def build_citations(
+    retrieved: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Build unique citations."""
+
+    citations: list[dict[str, Any]] = []
+    seen: set[tuple[Any, Any]] = set()
+
+    for item in retrieved:
+        source = item.get("source")
+        chunk_id = item.get("chunk_id")
+
+        key = (source, chunk_id)
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+
+        citations.append(
+            {
+                "source": source,
+                "chunk_id": chunk_id,
+            }
+        )
+
+    return citations
+
+
+def answer_question(question: str) -> dict[str, Any]:
+    """Generate a grounded answer using retrieved passages."""
 
     retrieved = retrieve(question)
 
-    # Reject weak retrieval results.
-    relevant = [chunk for chunk in retrieved if chunk["score"] >= MIN_SIMILARITY]
+    if not retrieved:
+        return {
+            "answer": UNKNOWN_ANSWER,
+            "citations": [],
+        }
 
-    if not relevant:
-        return AskResponse(
-            answer="I don't know. The available sources do not sufficiently support an answer.",
-            citations=[],
-        )
+    context = build_context(retrieved)
 
-    context, selected_chunks = assemble_context(
-        relevant,
-        token_budget=DEFAULT_TOKEN_BUDGET,
-    )
+    if not context:
+        return {
+            "answer": UNKNOWN_ANSWER,
+            "citations": [],
+        }
 
-    if not selected_chunks:
-        return AskResponse(
-            answer="I don't know. No supporting passage fits the context budget.",
-            citations=[],
-        )
+    prompt = f"""
+Answer the question using only the provided context.
 
-    system_prompt = (
-        "You are a parcel logistics support assistant. "
-        "Answer customer questions using only the supplied policy passages. "
-        "Never invent delivery times, policies, or other details. "
-        "If the passages do not support an answer, say exactly "
-        "'I don't know.' Keep answers concise."
-    )
+If the answer is not present in the context,
+say that you don't know.
 
-    user_prompt = f"""
-Policy passages:
-
+Context:
 {context}
 
-Customer question:
-
+Question:
 {question}
-
-Answer using only the policy passages above.
 """
 
-    llm = get_llm_client()
+    try:
+        settings = Settings()
 
-    result = llm.complete(
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
-        temperature=0.0,
-    )
+        with httpx.Client() as client:
+            llm = LLMClient(
+                settings=settings,
+                http_client=client,
+            )
 
-    answer = result.content.strip()
+            result = llm.complete(
+                system_prompt=(
+                    "You are a helpful assistant. Answer using only the provided context."
+                ),
+                user_prompt=prompt,
+                temperature=0.0,
+            )
 
-    if not answer:
-        answer = "I don't know. No supported answer was generated."
+        answer = result.content.strip() or UNKNOWN_ANSWER
 
-    citations = [
-        Citation(
-            source=f"{chunk['document']} ({chunk['chunk_id']})",
-            passage=chunk["text"],
-        )
-        for chunk in selected_chunks
-    ]
+        return {
+            "answer": answer,
+            "citations": build_citations(retrieved),
+        }
 
-    logger.info(
-        "RAG answer generated: retrieved=%d selected=%d model=%s",
-        len(retrieved),
-        len(selected_chunks),
-        result.model,
-    )
+    except Exception:
+        logger.exception("Failed to generate answer")
 
-    return AskResponse(
-        answer=answer,
-        citations=citations,
-    )
+        return {
+            "answer": UNKNOWN_ANSWER,
+            "citations": [],
+        }
