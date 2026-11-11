@@ -1,16 +1,44 @@
--- sql/schema.sql: the ONE definition of the database (Playbook DB-03).
--- To change the schema, edit this file in place. Do not create separate ALTER files.
--- Docker runs this file when the database is first created (see docker-compose.yml).
---
--- Replace this example with the tables for your variant on day 7.
 
-CREATE TABLE IF NOT EXISTS documents (
-    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    source      TEXT        NOT NULL,                       -- where the text came from (cited in answers)
-    body        TEXT        NOT NULL,
-    allowed_roles TEXT[]    NOT NULL DEFAULT '{}',          -- who may see it (filter BEFORE ranking, AI-08)
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()          -- always timestamptz in UTC (DB-08)
+-- sql/schema.sql
+-- Day 7: Variant 3 - Parcels
+-- Canonical database schema
+
+-- Table 1: Parcel categories
+CREATE TABLE IF NOT EXISTS categories (
+    category_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
 );
 
--- One reason per index (DB-04): this one speeds up "documents from one source".
-CREATE INDEX IF NOT EXISTS idx_documents_source ON documents (source);
+-- Table 2: Parcels
+CREATE TABLE IF NOT EXISTS parcels (
+    parcel_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL,
+    status TEXT NOT NULL,
+    category_id BIGINT NOT NULL
+        REFERENCES categories(category_id),
+    created_at DATE NOT NULL,
+
+    CONSTRAINT chk_parcel_status
+        CHECK (status IN ('active', 'inactive', 'pending'))
+);
+
+-- Table 3: Parcel status history
+CREATE TABLE IF NOT EXISTS parcel_events (
+    event_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    parcel_id BIGINT NOT NULL
+        REFERENCES parcels(parcel_id) ON DELETE CASCADE,
+    status TEXT NOT NULL,
+    event_time TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Index 1: Speeds up filtering parcels by status.
+CREATE INDEX IF NOT EXISTS idx_parcels_status
+    ON parcels(status);
+
+-- Index 2: Speeds up joins and filtering by category.
+CREATE INDEX IF NOT EXISTS idx_parcels_category
+    ON parcels(category_id);
+
+-- Index 3: Speeds up fetching a parcel's events by time.
+CREATE INDEX IF NOT EXISTS idx_events_parcel_time
+    ON parcel_events(parcel_id, event_time);

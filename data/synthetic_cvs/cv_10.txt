@@ -1,0 +1,6 @@
+Name: Karan Malhotra
+Email: karan.malhotra@example.com
+Phone: 9000000009
+Skills: Docker, Kubernetes
+Education: B.Sc Information Technology
+Professional Experience: 2 years

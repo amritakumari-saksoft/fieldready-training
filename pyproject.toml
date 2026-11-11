@@ -25,6 +25,12 @@ dependencies = [
     "httpx",               # outbound HTTP calls (always set a timeout)
     "jinja2",              # HTML templates for the small web page
     "python-multipart",    # needed by FastAPI for HTML form posts
+    "tiktoken>=0.14.0",
+    "sentence-transformers>=6.2.0",
+    "ollama>=0.6.3",
+    "numpy>=2.5.4",
+    "psycopg[binary]>=3.3.7",
+    "sqlalchemy>=2.1.8",
 ]
 
 [dependency-groups]
@@ -37,6 +43,7 @@ dev = [
     "bandit",              # looks for risky Python patterns
     "pip-audit",           # checks dependencies for known vulnerabilities
     "pre-commit",          # runs checks before each commit
+    "httpx>=0.28.1",
 ]
 
 # ---------------------------------------------------------------- tool settings
@@ -55,7 +62,8 @@ max-complexity = 10        # keep functions small (PY-14)
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101"]      # assert is how pytest checks things
-
+"scripts/**" = ["T201"]
+"sql/injection_demo.py" = ["S608", "T201"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]

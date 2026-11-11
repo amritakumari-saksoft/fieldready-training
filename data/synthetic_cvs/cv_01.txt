@@ -1,0 +1,6 @@
+Name: Priya Sharma
+Email: priya.sharma@example.com
+Phone: 9000000000
+Skills: Python, SQL
+Education: B.Tech Computer Science
+Professional Experience: 0 years

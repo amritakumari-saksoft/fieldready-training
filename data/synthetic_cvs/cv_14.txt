@@ -1,0 +1,6 @@
+Name: Dev Shah
+Email: dev.shah@example.com
+Phone: 9000000013
+Skills: Python, FastAPI
+Education: B.Sc Information Technology
+Professional Experience: 6 years

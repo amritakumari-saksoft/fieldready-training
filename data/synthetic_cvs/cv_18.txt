@@ -1,0 +1,6 @@
+Name: Nikhil Kulkarni
+Email: nikhil.kulkarni@example.com
+Phone: 9000000017
+Skills: JavaScript, React
+Education: B.Sc Information Technology
+Professional Experience: 3 years

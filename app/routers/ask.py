@@ -1,4 +1,4 @@
-"""The /ask endpoint: the place where you build the grounded assistant (days 9 to 14)."""
+"""Ask endpoint."""
 
 from fastapi import APIRouter
 
@@ -10,5 +10,11 @@ router = APIRouter()
 
 @router.post("/ask", response_model=AskResponse)
 def ask(body: AskRequest) -> AskResponse:
-    """Thin router: validate (done by Pydantic), call the service, return the result."""
-    return answering.answer_question(body.question)
+    """Answer a question using retrieved sources."""
+
+    result = answering.answer_question(body.question)
+
+    return AskResponse(
+        answer=result["answer"],
+        citations=result["citations"],
+    )

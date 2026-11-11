@@ -1,0 +1,1 @@
+Customers can track parcels using their tracking number. Tracking information is updated when parcels reach scanning checkpoints.

@@ -1,0 +1,6 @@
+Name: Rohan Gupta
+Email: rohan.gupta@example.com
+Phone: 9000000005
+Skills: Python, SQL
+Education: B.Sc Information Technology
+Professional Experience: 5 years

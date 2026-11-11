@@ -1,14 +1,46 @@
-"""What "ready" means for this service.
+"""Application dependency readiness checks."""
 
-Add a check here for each thing the service needs (database, model provider, ...).
-Each check returns a short problem text, or nothing when all is well.
-"""
+import logging
+
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+
+from app.database import engine
+
+logger = logging.getLogger(__name__)
+
+
+def check_database() -> bool:
+    """Check whether PostgreSQL is available."""
+
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+
+        return True
+
+    except SQLAlchemyError as exc:
+        logger.warning(
+            "Database readiness check failed: %s",
+            type(exc).__name__,
+        )
+        return False
 
 
 def check_dependencies() -> list[str]:
-    """Return a list of problems. An empty list means ready.
+    """Return unavailable application dependencies."""
 
-    TODO(trainee, day 7 and 11): add a database check here, for example open a connection
-    with a short timeout and run `SELECT 1`. Always use a timeout (PY-12).
-    """
-    return []
+    problems: list[str] = []
+
+    if not check_database():
+        problems.append("database_unavailable")
+
+    return problems
+
+
+def check_readiness() -> tuple[bool, list[str]]:
+    """Return readiness status and dependency problems."""
+
+    problems = check_dependencies()
+
+    return not problems, problems
